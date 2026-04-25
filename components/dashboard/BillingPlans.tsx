@@ -14,14 +14,14 @@ const plans = [
     id: 'pro',
     name: 'Pro',
     price: '$19/mo',
-    description: 'Для фрилансеров.',
+    description: 'Для фрилансеров. Скоро подключим оплату.',
     features: ['10 сайтов', 'Без watermark', 'SEO', 'Leads'],
   },
   {
     id: 'business',
     name: 'Business',
     price: '$49/mo',
-    description: 'Для студий.',
+    description: 'Для студий. Скоро подключим оплату.',
     features: ['100 сайтов', 'Без watermark', 'Приоритетные фичи'],
   },
 ] as const;
@@ -31,28 +31,13 @@ export default function BillingPlans({
 }: {
   currentPlan: PlanType;
 }) {
-  async function checkout(plan: PlanType) {
+  function checkout(plan: PlanType) {
     if (plan === 'free') {
-      alert('Free тариф активируется автоматически после отмены подписки.');
+      alert('Ты уже на Free тарифе.');
       return;
     }
 
-    const res = await fetch('/api/stripe/checkout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ plan }),
-    });
-
-    const json = await res.json();
-
-    if (!res.ok) {
-      alert(json.error || 'Ошибка оплаты');
-      return;
-    }
-
-    window.location.href = json.url;
+    alert('Оплата пока отключена. ЮKassa подключим позже.');
   }
 
   return (
