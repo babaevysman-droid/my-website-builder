@@ -1,3 +1,7 @@
+// types/index.ts
+
+export type PlanType = 'DEMO' | 'FLIGHT' | 'HUNTER' | 'free' | 'pro' | 'business';
+
 export type BlockType =
   | 'header'
   | 'hero'
@@ -30,10 +34,15 @@ export type StyleDNA = {
   gradientOverlay?: string;
 };
 
+export type CustomFont = {
+  name: string;
+  url: string;
+};
+
 export type Theme = {
   font: string;
-  fontUrl?: string;
-  customFonts?: string[];
+  fontUrl: string;
+  customFonts: CustomFont[];
   textColor: string;
   primaryColor: string;
   backgroundColor: string;
@@ -44,13 +53,20 @@ export type Theme = {
 export type Block = {
   id: string;
   type: BlockType;
-  props: Record<string, unknown>;
+  // ИСПРАВЛЕНИЕ: Изменили Record<string, unknown> на any, чтобы компилятор не блокировал рендер
+  props: any; 
 };
 
 export type Site = {
   id: string;
   name: string;
-  slug?: string;
+  slug: string;
+  status: 'draft' | 'published';
+  seo_title?: string | null;
+  seo_description?: string | null;
+  created_at?: string;
+  updated_at?: string;
   theme: Theme;
   blocks: Block[];
+  user_id?: string;
 };

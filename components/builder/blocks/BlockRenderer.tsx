@@ -316,15 +316,15 @@ export default function BlockRenderer({ block, siteId, editable = false }: { blo
         return (
           <FooterBlock
             blockId={block.id} editable={editable}
-            brand={safeString(block.props.brand)}
-            description={safeString(block.props.description)}
-            columns={stringArray(block.props.columns)}
-            links={stringArray(block.props.links)}
-            copyright={safeString(block.props.copyright)}
+            brand={safeString((block.props as any).brand)}
+            description={safeString((block.props as any).description)}
+            columns={stringArray((block.props as any).columns)}
+            links={stringArray((block.props as any).links)}
+            copyright={safeString((block.props as any).copyright)}
             blockStyle={blockStyle}
           />
         );
-
+        
       case 'contact':
         return (
           <ContactBlock

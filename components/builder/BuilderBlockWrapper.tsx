@@ -9,8 +9,10 @@ interface WrapperProps {
 }
 
 export default function BuilderBlockWrapper({ id, children }: WrapperProps) {
-  const { selectedBlockId, selectBlock, removeBlock, duplicateBlock, moveBlock } = useBuilderStore();
-  const isSelected = selectedBlockId === id;
+  // ИСПРАВЛЕНИЕ: Берем правильные имена из твоего стора
+  const { activeBlockId, setActiveBlock, removeBlock, duplicateBlock, moveBlockUp, moveBlockDown } = useBuilderStore();
+  
+  const isSelected = activeBlockId === id;
 
   return (
     <div 
@@ -19,7 +21,7 @@ export default function BuilderBlockWrapper({ id, children }: WrapperProps) {
       }`}
       onClick={(e) => {
         e.stopPropagation();
-        selectBlock(id);
+        setActiveBlock(id); // ИСПРАВЛЕНИЕ
       }}
     >
       {/* Tilda-style Control Panel (появляется при ховере или если блок выбран) */}
@@ -27,16 +29,19 @@ export default function BuilderBlockWrapper({ id, children }: WrapperProps) {
         isSelected ? 'border-red-600 opacity-100' : 'border-white/20 opacity-0 group-hover:opacity-100'
       } transition-opacity duration-200 z-20`}>
         
-        <button onClick={() => selectBlock(id)} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-md text-xs font-medium flex items-center gap-1">
+        <button onClick={() => setActiveBlock(id)} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-md text-xs font-medium flex items-center gap-1">
           <Settings size={14} /> Настройки
         </button>
         <div className="w-px h-4 bg-white/10 mx-1" />
-        <button onClick={(e) => { e.stopPropagation(); moveBlock(id, 'up'); }} className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-md">
+        
+        {/* ИСПРАВЛЕНИЕ: Используем moveBlockUp и moveBlockDown */}
+        <button onClick={(e) => { e.stopPropagation(); moveBlockUp(id); }} className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-md">
           <ArrowUp size={16} />
         </button>
-        <button onClick={(e) => { e.stopPropagation(); moveBlock(id, 'down'); }} className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-md">
+        <button onClick={(e) => { e.stopPropagation(); moveBlockDown(id); }} className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-md">
           <ArrowDown size={16} />
         </button>
+        
         <button onClick={(e) => { e.stopPropagation(); duplicateBlock(id); }} className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-md">
           <Copy size={16} />
         </button>

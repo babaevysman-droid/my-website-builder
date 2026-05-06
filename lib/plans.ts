@@ -4,6 +4,10 @@ export const PLAN_LIMITS: Record<PlanType, number> = {
   free: 1,
   pro: 10,
   business: 100,
+  // Добавляем твои новые тарифы, чтобы TypeScript успокоился:
+  DEMO: 1,
+  FLIGHT: 5,
+  HUNTER: 999,
 };
 
 export function canCreateSite(plan: PlanType, currentSitesCount: number) {
