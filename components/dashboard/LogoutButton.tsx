@@ -9,7 +9,6 @@ export default function LogoutButton() {
   async function logout() {
     const supabase = createClient();
     await supabase.auth.signOut();
-
     router.push('/login');
     router.refresh();
   }
@@ -17,7 +16,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={logout}
-      className="rounded-xl border border-neutral-700 px-4 py-2 text-sm hover:bg-neutral-800"
+      className="rounded-xl border border-white/10 px-4 py-2 text-sm text-neutral-300 hover:bg-white/10"
     >
       Выйти
     </button>

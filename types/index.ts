@@ -1,55 +1,56 @@
-export type PlanType = 'free' | 'pro' | 'business';
-
-export interface UserProfile {
-  id: string;
-  email: string;
-  plan: PlanType;
-  created_at: string;
-}
-
 export type BlockType =
+  | 'header'
   | 'hero'
   | 'features'
   | 'pricing'
   | 'testimonials'
-  | 'cta'
   | 'faq'
+  | 'logos'
+  | 'stats'
+  | 'cta'
   | 'gallery'
-  | 'footer'
-  | 'contact';
+  | 'contact'
+  | 'footer';
 
-export interface Block {
-  id: string;
-  type: BlockType;
-  props: Record<string, any>;
-}
+export type StyleDNA = {
+  mood?: string;
+  headingFont?: string;
+  bodyFont?: string;
+  palette?: {
+    background?: string;
+    surface?: string;
+    text?: string;
+    muted?: string;
+    accent?: string;
+  };
+  radius?: number;
+  typography?: string;
+  effects?: string[];
+  density?: string;
+  gradientOverlay?: string;
+};
 
-
-
-export interface Theme {
+export type Theme = {
   font: string;
+  fontUrl?: string;
+  customFonts?: string[];
+  textColor: string;
   primaryColor: string;
   backgroundColor: string;
-}
+  radius: number;
+  styleDNA?: StyleDNA;
+};
 
-export interface Site {
+export type Block = {
   id: string;
-  user_id: string;
+  type: BlockType;
+  props: Record<string, unknown>;
+};
+
+export type Site = {
+  id: string;
   name: string;
-  slug: string;
-  status: 'draft' | 'published';
+  slug?: string;
   theme: Theme;
   blocks: Block[];
-  seo_title?: string | null;
-  seo_description?: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Lead {
-  id: string;
-  site_id: string;
-  data: Record<string, string>;
-  created_at: string;
-  
-}
+};

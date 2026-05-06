@@ -1,12 +1,30 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { Block, Site } from '@/types';
+import { Block, Site, Theme } from '@/types';
 import BlockRenderer from '@/components/builder/blocks/BlockRenderer';
 
 interface Props {
   params: Promise<{
     slug: string;
   }>;
+}
+
+const defaultTheme: Theme = {
+  font: 'Inter',
+  fontUrl: '',
+  customFonts: [],
+  textColor: '#000000',
+  primaryColor: '#000000',
+  backgroundColor: '#ffffff',
+  radius: 16,
+};
+
+function normalizeTheme(theme?: Partial<Theme> | null): Theme {
+  return {
+    ...defaultTheme,
+    ...(theme ?? {}),
+    customFonts: theme?.customFonts ?? [],
+  };
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -20,11 +38,7 @@ export async function generateMetadata({ params }: Props) {
     .eq('status', 'published')
     .single();
 
-  if (!site) {
-    return {
-      title: 'Site Not Found',
-    };
-  }
+  if (!site) return { title: 'Site Not Found' };
 
   const title = site.seo_title || site.name;
   const description = site.seo_description || '';
@@ -37,10 +51,6 @@ export async function generateMetadata({ params }: Props) {
       description,
     },
   };
-}
-
-function renderBlock(block: Block, siteId: string) {
-  return <BlockRenderer key={block.id} block={block} siteId={siteId} />;
 }
 
 export default async function PublicSitePage({ params }: Props) {
@@ -59,23 +69,35 @@ export default async function PublicSitePage({ params }: Props) {
   }
 
   const site = data as Site;
+  const theme = normalizeTheme(site.theme);
+  const customFonts = theme.customFonts ?? [];
 
   return (
-    <main
-      className="min-h-screen w-full"
-      style={{
-        fontFamily: site.theme?.font || 'Inter',
-        backgroundColor: site.theme?.backgroundColor || '#ffffff',
-        color: site.theme?.primaryColor || '#000000',
-      }}
-    >
-      <div className="flex w-full flex-col">
-        {site.blocks?.map((block) => renderBlock(block, site.id))}
-      </div>
+    <>
+      {customFonts.map((font) => (
+        <link key={font.name} href={font.url} rel="stylesheet" />
+      ))}
 
-      <div className="fixed bottom-4 right-4 rounded border bg-white px-3 py-1 text-xs text-black opacity-70 shadow-lg">
-        Made with Builder
-      </div>
-    </main>
+      {theme.fontUrl && <link href={theme.fontUrl} rel="stylesheet" />}
+
+      <main
+        className="min-h-screen w-full"
+        style={{
+          fontFamily: theme.font || 'Inter',
+          backgroundColor: theme.backgroundColor || '#ffffff',
+          color: theme.textColor || '#000000',
+        }}
+      >
+        <div className="flex w-full flex-col">
+          {site.blocks?.map((block: Block) => (
+            <BlockRenderer key={block.id} block={block} siteId={site.id} />
+          ))}
+        </div>
+
+        <div className="fixed bottom-4 right-4 rounded border bg-white px-3 py-1 text-xs text-black opacity-70 shadow-lg">
+          Made with Corshun
+        </div>
+      </main>
+    </>
   );
 }

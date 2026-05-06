@@ -43,7 +43,7 @@ export default function CreateSiteButton({
     if (!canCreateSite(plan, sitesCount)) {
       alert(
         plan === 'free'
-          ? 'На Free тарифе можно создать только 1 сайт. Обнови тариф до Pro.'
+          ? 'На Free тарифе можно создать только 1 сайт. Позже можно будет обновить тариф.'
           : 'Ты достиг лимита сайтов на текущем тарифе.'
       );
       return;
@@ -98,39 +98,47 @@ export default function CreateSiteButton({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="rounded-xl bg-white px-5 py-3 font-medium text-black"
+        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500 active:scale-[0.98]"
       >
         Создать сайт
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-4xl rounded-3xl border border-neutral-800 bg-neutral-950 p-6 text-white shadow-2xl">
-            <div className="mb-6 flex items-start justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur">
+          <div className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-2xl border border-white/10 bg-[#111114] p-6 text-white shadow-2xl shadow-black/40">
+            <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold">Создать сайт</h2>
-                <p className="mt-1 text-sm text-neutral-400">
-                  Выбери шаблон и задай название проекта.
+                <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-red-400/80">
+                  Новый проект
+                </p>
+
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  Создать сайт
+                </h2>
+
+                <p className="mt-2 text-sm leading-6 text-white/45">
+                  Выбери шаблон, задай название и открой редактор.
                 </p>
               </div>
 
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-xl border border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-800"
+                className="rounded-lg border border-white/10 bg-white/[0.03] px-3.5 py-2 text-sm text-white/65 transition hover:bg-white/[0.07] hover:text-white"
               >
                 Закрыть
               </button>
             </div>
 
             <div className="mb-6">
-              <label className="mb-2 block text-sm text-neutral-400">
+              <label className="mb-2 block text-sm text-white/45">
                 Название сайта
               </label>
+
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Например: demo landing"
-                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3 outline-none focus:border-white"
+                placeholder="Например: agency demo"
+                className="h-11 w-full rounded-xl border border-white/10 bg-[#08080A] px-3 text-sm outline-none transition placeholder:text-white/30 focus:border-red-500/50"
               />
             </div>
 
@@ -142,16 +150,18 @@ export default function CreateSiteButton({
                   <button
                     key={template.id}
                     onClick={() => setSelectedTemplateId(template.id)}
-                    className={`rounded-2xl border p-5 text-left transition ${
+                    className={[
+                      'rounded-2xl border p-4 text-left transition',
                       active
-                        ? 'border-white bg-neutral-900'
-                        : 'border-neutral-800 bg-neutral-900 hover:border-neutral-500'
-                    }`}
+                        ? 'border-red-500/50 bg-red-500/10'
+                        : 'border-white/10 bg-[#08080A] hover:border-white/20',
+                    ].join(' ')}
                   >
-                    <div className="mb-4 h-28 rounded-xl border border-neutral-800 bg-gradient-to-br from-neutral-800 to-neutral-950" />
+                    <div className="mb-4 h-24 rounded-xl border border-white/10 bg-white/[0.03]" />
 
-                    <h3 className="font-semibold">{template.name}</h3>
-                    <p className="mt-2 text-sm text-neutral-400">
+                    <h3 className="text-lg font-semibold">{template.name}</h3>
+
+                    <p className="mt-2 text-sm leading-6 text-white/45">
                       {template.description}
                     </p>
                   </button>
@@ -162,7 +172,7 @@ export default function CreateSiteButton({
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-xl border border-neutral-700 px-5 py-3 text-sm hover:bg-neutral-800"
+                className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/65 transition hover:bg-white/[0.07] hover:text-white"
               >
                 Отмена
               </button>
@@ -170,7 +180,7 @@ export default function CreateSiteButton({
               <button
                 disabled={loading}
                 onClick={createSite}
-                className="rounded-xl bg-white px-5 py-3 text-sm font-medium text-black disabled:opacity-60"
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500 disabled:opacity-60"
               >
                 {loading ? 'Создаём...' : 'Создать и открыть редактор'}
               </button>

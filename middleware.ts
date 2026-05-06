@@ -1,7 +1,50 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
+const MAIN_DOMAINS = [
+  'localhost:3000',
+  'localhost',
+  'corshun.ru',
+  'www.corshun.ru',
+  'my-website-builder-two.vercel.app',
+];
+
+function isStaticAsset(pathname: string) {
+  return (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/favicon.ico') ||
+    pathname.startsWith('/robots.txt') ||
+    pathname.startsWith('/sitemap.xml') ||
+    pathname.includes('.')
+  );
+}
+
 export async function middleware(request: NextRequest) {
+  const host = request.headers.get('host') || '';
+  const pathname = request.nextUrl.pathname;
+
+  if (!isStaticAsset(pathname)) {
+    const isMainDomain = MAIN_DOMAINS.includes(host);
+
+    const isAppRoute =
+      pathname.startsWith('/dashboard') ||
+      pathname.startsWith('/builder') ||
+      pathname.startsWith('/login') ||
+      pathname.startsWith('/auth') ||
+      pathname.startsWith('/api') ||
+      pathname.startsWith('/settings') ||
+      pathname.startsWith('/domains') ||
+      pathname.startsWith('/billing') ||
+      pathname.startsWith('/s');
+
+    if (!isMainDomain && !isAppRoute) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/_domain';
+      url.searchParams.set('host', host);
+      return NextResponse.rewrite(url);
+    }
+  }
+
   let response = NextResponse.next({
     request,
   });
@@ -56,10 +99,12 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const pathname = request.nextUrl.pathname;
-
   const isProtectedRoute =
-    pathname.startsWith('/dashboard') || pathname.startsWith('/builder');
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/builder') ||
+    pathname.startsWith('/settings') ||
+    pathname.startsWith('/domains') ||
+    pathname.startsWith('/billing');
 
   const isAuthRoute = pathname.startsWith('/login');
 
@@ -80,9 +125,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/builder/:path*',
-    '/login',
-    '/auth/callback',
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)',
   ],
 };

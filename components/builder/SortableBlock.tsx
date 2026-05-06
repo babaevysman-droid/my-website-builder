@@ -1,100 +1,61 @@
 'use client';
 
-import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Block } from '@/types';
 import { useBuilderStore } from '@/store/useBuilderStore';
 import BlockRenderer from './blocks/BlockRenderer';
+import BlockFloatingToolbar from './BlockFloatingToolbar';
+import { ErrorBoundary } from '@/components/system/ErrorBoundary';  // <-- ЭТО НОВЫЙ ИМПОРТ
 
-export default function SortableBlock({ block }: { block: Block }) {
-  const blocks = useBuilderStore((s) => s.blocks);
-  const activeBlockId = useBuilderStore((s) => s.activeBlockId);
+export default function SortableBlock({
+  id,
+  block,
+}: {
+  id: string;
+  block: Block;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
 
-  const setActiveBlock = useBuilderStore((s) => s.setActiveBlock);
-  const removeBlock = useBuilderStore((s) => s.removeBlock);
-  const duplicateBlock = useBuilderStore((s) => s.duplicateBlock);
-  const moveBlockUp = useBuilderStore((s) => s.moveBlockUp);
-  const moveBlockDown = useBuilderStore((s) => s.moveBlockDown);
+  const activeBlockId = useBuilderStore((state) => state.activeBlockId);
+  const setActiveBlock = useBuilderStore((state) => state.setActiveBlock);
 
-  const index = blocks.findIndex((b) => b.id === block.id);
-  const isFirst = index === 0;
-  const isLast = index === blocks.length - 1;
-
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: block.id });
-
-  const isActive = activeBlockId === block.id;
+  const isActive = activeBlockId === id;
 
   return (
-    <section
+    <div
       ref={setNodeRef}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
       }}
-      onClick={() => setActiveBlock(block.id)}
-      className={`group relative border-2 ${
-        isActive ? 'border-blue-500' : 'border-transparent'
-      }`}
+      onClick={(event) => {
+        event.stopPropagation();
+        setActiveBlock(id);
+      }}
+      className={[
+        'group relative cursor-default',
+        isActive ? 'z-20 outline outline-2 outline-blue-500' : 'hover:outline hover:outline-1 hover:outline-blue-300',
+      ].join(' ')}
     >
-      <div className="absolute right-3 top-3 z-10 hidden flex-wrap gap-2 group-hover:flex">
-        <button
-          {...attributes}
-          {...listeners}
-          className="rounded-lg bg-black px-3 py-1 text-xs text-white"
-        >
-          Drag
-        </button>
+      <BlockFloatingToolbar
+        blockId={id}
+        active={isActive}
+        dragAttributes={attributes}
+        dragListeners={listeners}
+      />
 
-        <button
-          disabled={isFirst}
-          onClick={(e) => {
-            e.stopPropagation();
-            moveBlockUp(block.id);
-          }}
-          className="rounded-lg bg-neutral-800 px-3 py-1 text-xs text-white disabled:opacity-40"
-        >
-          ↑
-        </button>
-
-        <button
-          disabled={isLast}
-          onClick={(e) => {
-            e.stopPropagation();
-            moveBlockDown(block.id);
-          }}
-          className="rounded-lg bg-neutral-800 px-3 py-1 text-xs text-white disabled:opacity-40"
-        >
-          ↓
-        </button>
-
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            duplicateBlock(block.id);
-          }}
-          className="rounded-lg bg-blue-600 px-3 py-1 text-xs text-white"
-        >
-          Copy
-        </button>
-
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            removeBlock(block.id);
-          }}
-          className="rounded-lg bg-red-600 px-3 py-1 text-xs text-white"
-        >
-          Delete
-        </button>
-      </div>
-
-      <BlockRenderer block={block} />
-    </section>
+      {/* 🔥 ВОТ ЗДЕСЬ ОБОРАЧИВАЕМ BlockRenderer в ErrorBoundary */}
+      <ErrorBoundary
+        fallback={
+          <div className="p-8 m-4 text-center text-red-400 border border-red-500/30 rounded-xl">
+            ⚠️ Блок [{block.type}] не может быть отображён
+          </div>
+        }
+      >
+        <BlockRenderer block={block} editable />
+      </ErrorBoundary>
+    </div>
   );
 }

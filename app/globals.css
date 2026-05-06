@@ -24,3 +24,19 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+.toolbar-btn {
+  display: inline-flex;
+  height: 40px;
+  min-width: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0 12px;
+  font-size: 16px;
+  color: #111;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.toolbar-btn:hover {
+  background: #f1f1f1;
+}

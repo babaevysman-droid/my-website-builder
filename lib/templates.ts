@@ -15,8 +15,11 @@ export const siteTemplates: SiteTemplate[] = [
     description: 'Для стартапа, приложения или онлайн-сервиса.',
     theme: {
       font: 'Inter',
+      fontUrl: '',
+      textColor: '#111111',
       primaryColor: '#111827',
       backgroundColor: '#ffffff',
+      radius: 16,
     },
     blocks: [
       {
@@ -73,8 +76,11 @@ export const siteTemplates: SiteTemplate[] = [
     description: 'Для дизайнера, разработчика, фотографа или фрилансера.',
     theme: {
       font: 'Georgia',
+      fontUrl: '',
+      textColor: '#18181b',
       primaryColor: '#18181b',
       backgroundColor: '#fafafa',
+      radius: 18,
     },
     blocks: [
       {
@@ -130,8 +136,11 @@ export const siteTemplates: SiteTemplate[] = [
     description: 'Для студии, агентства или команды услуг.',
     theme: {
       font: 'Inter',
+      fontUrl: '',
+      textColor: '#0f172a',
       primaryColor: '#0f172a',
       backgroundColor: '#f8fafc',
+      radius: 20,
     },
     blocks: [
       {
